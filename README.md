@@ -1,6 +1,6 @@
-![caption|Attack Alpaca by Lydia Harrison, who is also the originator of
-the attack alpaca concept](images/Alpaca.jpg
-"caption|Attack Alpaca by Lydia Harrison, who is also the originator of the attack alpaca concept")
+![Attack Alpaca by Lydia Harrison, who is also the originator of
+the attack alpaca concept](images/Alpaca.jpg)
+
 
 Farmer George comes from a long line of alpaca farmers. They have raised
 alpacas for generations, peacefully shearing them for their valuable

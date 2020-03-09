@@ -1,9 +1,22 @@
-CPPFLAGS=--std=gnu++11 -g
-CC=g++
-LD=g++
+# Environment
+CXXFLAGS=`fltk-config --cxxflags` --std=c++11 -g
+LDFLAGS=`fltk-config --ldflags`
+CXX=`fltk-config --cxx`
 
-alpacaFracas: main.o alpacaFracasPack.o alpaca.o randalpaca.o fracas.o randPack.o
-	g++ $(CPPFLAGS) -o alpacaFracas $^
+#The Apps
+TARGETS=grid_test
+all: $(TARGETS)
+grid_test: grid_test.o grid_widget.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
+#The Ingredients
+grid_widget.o: grid_widget.cpp grid_widget.h
+grid_test.o: grid_test.cpp grid_widget.h
+
+#FLUID ingredient builds
+%.h %.cxx: %.fl
+	fluid -c $^
+
+# utility
 clean:
-	rm -f *.o alpacaFracas
+	rm -f *.o $(TARGETS)

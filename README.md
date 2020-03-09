@@ -1,119 +1,157 @@
-![Attack Alpaca by Lydia Harrison, who is also the originator of
-the attack alpaca concept](images/Alpaca.jpg
-"Attack Alpaca by Lydia Harrison, who is also the originator of the attack alpaca concept")
+## Introduction
 
+In this programming assignment, we are going to explore a classic in
+Computer Science\! This is Conway's Game of of life. It will be a good
+practice for using vectors, as well as making use of FLTK for
+graphics and animation.
 
-Farmer George comes from a long line of alpaca farmers. They have raised
-alpacas for generations, peacefully shearing them for their valuable
-fibers. But then, one day, George became very bored with his life, and
-he thought it would be more fun to try to make these majestic
-pseudo-ruminants fight to the death.
+Conway's game of life was created by John Conway, a British
+mathematician, some time in the 1970's. It was an example of a problem
+first proposed by John Von Neumann (creator of the famous computer
+architecture). Von Neumann's problem was in the study of
+self-replicating machines. This proposal led Conway to create this
+little game, which is one of the first examples of a field called
+cellular automata (CA).
 
-Soon, other alpaca farmers began to follow suit. Packs of attack alpacas
-were soon fighting in alpaca fracases the whole world over. It was a
-glorious, if not disturbing, sight. Unfortunately, actual alpaca blood
-sports are illegal, immoral, and extremely wasteful. So, instead, we are
-going to write a program to simulate the sport, so that we may partake
-of the blood-lust without harming any actual alpacas.
+The basic idea of a CA is to use a simple set of rules to create a very
+complex pattern. Don't be fooled by the easiness of understanding the
+rules. Conway's game of life, when played on an infinite grid, is
+capable of simulating a Turing machine. This means that the simple rules
+we are about to look at are capable of universal computation. In fact,
+randomly generated rule sets have a fairly high probability of being
+capable of universal computation. Maybe the universe is geared toward
+forming computers\!
 
-## The Rules of Alpaca Fracas
+## The Game of Life
 
-An alpaca fracas works by loading packs of attack alpacas into alpaca
-attack chutes, and then letting them fight each other. The order of
-events are:
+Conway's game of life is played on an orthogonal grid. Each element in
+the grid is a cell, and the cell is either alive or dead. Each grid
+arrangement is used to generate the next "generation" of cells. The fate
+of each cell is determined by it's neighbors. Take for instance, the
+cell 0. The X's are it's neighbors:
 
-1.  A pack of alpacas is chosen and loaded into the attack chutes.
-2.  The chutes open and the first alpaca from each pack enters the
-    arena.
-3.  The two alpacas fight. When one dies, it is replaced by the next one
-    in the chute.
-4.  The farmer who runs out of alpacas first loses. The other wins.
-5.  If all alpacas die, the game ends in a tie.
+`XXX`  
+`X0X`  
+`XXX`
 
-## Alpaca Mechanics
+So each cell has 8 neighboring cells. The number of living neighbors
+surrounding a cell are what determines what the cell does in the next
+generation. The rules that the game follows are:
 
-An alpaca has the following statistics:
+1.  A living cell with fewer than 2 living neighbors dies. (Starvation)
+2.  A living cell with more than 3 living neighbors dies. (Overcrowding)
+3.  A living cell with 2 or 3 living neighbors lives on. (Stability)
+4.  A dead cell with exactly 3 living neighbors will become a live cell
+    (Reproduction)
 
-  - **Status** - One of NONE, ASLEEP, or STUNNED
-      - NONE - This is a healthy alpaca. Fear it.
-      - ASLEEP - This is a sleeping alpaca. It will not be able to
-        attack for a while.
-      - STUNNED - A stunned alpaca will usually not be able to attack,
-        but sometimes it can.
-  - **HP** - This is the number of remaining hit points for the alpaca.
-    If this reaches 0, the alpaca dies.
-  - **Power** - This is the amount of fighting power left in the alpaca.
-    Attacks expend power points, and once these reach 0 the alpaca dies.
-  - **Defense** - This is a percent reduction in damage this alpaca will
-    take.
-  - **Attack** - This is a modifier which indicates how much damage an
-    attack causes.
+So you can see that counting the cells around each cell, plus that
+cell's state, determines what the cell does. Generally, this results in
+weird and wonderful patterns. There are some patterns that are
+interesting, however. Take for instance:
 
-## Alpaca Attack Actions
+`   `
+`***`
+`   `
 
-An alpaca attack can be one or more of the following actions:
+Following those rules, there are two possible iterations which this
+oscillates through.
 
-  - Attack the Enemy
-  - Stun the Enemy
-  - Put the Enemy to Sleep
-  - Decrease the Enemy's Defense
-  - Decrease the Enemy's Attack
-  - Increase your Attack
-  - Increase your Defense
-  - Increase your HP
+`   `
+`***`
+`   `
+Followed by:
 
-## The Alpaca Code
-Explore the starter files and look at how the alpaca are implemented. You can go
-ahead and build the program by changing into the alpaca directory and
-typing:
+` * `  
+` * `  
+` * `
 
-` make`
+Then:
 
-Run the alpacaFracas program a few times to get a feel for what it does.
+`   `
+`***`
+`   `
+And so on. This is called a spinner. The next interesting one is the
+glider. Use a sheet of paper and checkout what the glider does:
 
-## Your Task
+` * `  
+`  *`  
+`***`  
+`   `
 
-In this programming assignment, we will be implementing an alpaca pack
-which acts on its own. To do this, you must do the following:
+The glider moves\! How cool is that?
 
-1.  Implement Alpacas with act functions which carry out the alpaca's
-    attack strategy. (See randalpaca.h and randalpaca.cpp for an
-    example)
-2.  Create a derived AlpacaFracasPack, named FracasPack, which contains
-    a no-arg constructor which builds your battle pack. (See randPack.h
-    and randPack.cpp for an example)
+There are some other interesting shapes, and a few are included with the
+assignment Director. That way you can run them through your own
+programs.
 
-When you build and run the program, you will be able to kick back and
-watch two alpaca packs battle to the death\!
+So now, we want to program this thing\!
 
-### Namespace Requirements
+What follows is a specification of the program as well as some ideas to
+get you started.
 
-Because everyone's pack is going to be named FrackasPack, you must
-create your own namespace. (Eventually these will all be compiled into a
-master fracas tournament\!).
+## Programming the Game of Life
 
-Your namespaces should be named as follows: first initial last name. For
-instance, mine would be 'rlowe'. All classes and functions you create
-should be part of this namespace.
+Our program will be called "life". It will be an FLTK application with
+the following appearance:
 
-Note that the namespace for the random alpaca fracas pack is randPack.
-Look at how this is done in the random alpaca files. There's really not
-much to it.
+![life.png](images/life.png)
 
-### Testing
+The buttons in this program perform the following actions:
 
-Test your attack alpaca fracas pack by changing main.cpp so that one of
-the packs is yours. I would recommend trying out being both pack 1 and
-pack 2. In the tournament this choice will be made randomly, so be able
-to win while going second\!
+* Clear - Sets all cells to black (dead)
+* Random - Randomize the grid, setting some to life some to dead
+* Go - Start the simulation.  The button will display "Stop" while the simulation is running
+* Stop - Stop the simulation, display "Go"
+* Load - Load a file into the grid
+* Save - Save the current grid to a file
 
-### Tournament
+In addition to this, when we click on the cells, we toggle them
+between living and dead.  So we can draw a new grid to try out, or we
+can modify one that is in process.
 
-The alpaca tournament will take place on March 9th. All of the alpaca
-packs will fight it out, and there will be one winner. The first second
-and third place winners will receive points and prizes\!
+The file format used by the program is very simple.  A space is in the
+file in the position of a dead cell, and an asterisk is in the
+position of a living cell.
 
-Your strategy should be coded into your alpaca's act functions as well
-as the makeup of your pack.
+Be sure to test your program with random grids, hand drawn grids, and
+the files included in your directory.
 
-Good Luck\!
+  - spinner
+  - glider
+  - gosper-gun
+
+The grid itself uses a 10x10 square for each cell.  Black is used for
+dead cells and green is used for living cells.  The grid itself is
+640x480 pixels making for a grid of 64x48 cells.
+
+## Some Tips
+  - I made a backend model of the cells consisiting of a grid class.
+  - I made a count neighbors function
+  - My grid class contains an update function which does the following
+
+<!-- end list -->
+
+    1.  Update the living status of each cell. (Which entity does this
+        is a tricky point of concern\!)
+    2.  Count the living neighbors of each cell and notify the cell of
+        the living status.
+
+<!-- end list -->
+
+The biggest tip is this. Asking yourself the right questions is the most
+important thing you can do. Try designing first and then coding, and
+then identify additional questions that come up. Keep that conversation
+between yourself and your code going, and you can write any program I
+throw at you\!
+
+Also, talk to each other. Talk to rubber ducks (that's a real method).
+Draw pictures on windows with crayon. Do whatever you have to do to
+tease out all of the detail and enjoy and savor the complexity that you
+create.
+
+## Notes
+
+Handwritten notes are important\! Here are the ones I drew up before
+writing even one line of code:
+
+![LifeNotes.jpg](images/LifeNotes.jpg)
